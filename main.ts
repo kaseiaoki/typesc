@@ -1,6 +1,6 @@
-let qword : Array<string> = ["title"];
+let qword : Array<string> = ["zero"];
 let text :Array<string> = [];
-let index :number = 1;
+let index :number = 0;
 
 class EventName {
     static LOAD:string = "load";
@@ -21,6 +21,11 @@ rec.addEventListener(EventName.CLICK, function () {
   console.log("recording");
 });
 
+let period_split = (text:string): string[] => {
+   const period : string= ".";
+   return text.split(period);
+}
+
 const next = document.getElementById('nextbutton');
 
 next.addEventListener(EventName.CLICK, function () {
@@ -32,8 +37,15 @@ next.addEventListener(EventName.CLICK, function () {
 const doc = document.getElementById('wordbutton');
 doc.addEventListener(EventName.CLICK, function () {
   let question: string  =  (<HTMLInputElement>document.getElementById("q_area")).value;
-  qword.push(question);
-  console.log(question);
+  period_split(question).forEach(function (q) {
+    console.log(q);
+    if(q.length>=2){
+      let regexpa =/[^a-zA-Z0-9|| ]/g
+      let set_question = q.replace(regexpa,"");
+      console.log(set_question);
+      qword.push(set_question);
+    }
+    });
 });
 
 const answer = document.getElementById('cansbutton');
@@ -45,13 +57,18 @@ answer.addEventListener(EventName.CLICK, function () {
     speechSynthesis.speak(msg);
 });
 
+let results_hash: { [key: string]: boolean; } = {};
+
+
 recognition.lang = 'en-US';
 recognition.addEventListener('result', function(event){
   let text: string= event.results.item(0).item(0).transcript;
   console.log(text);
   if(text==qword[1]){
     document.getElementById("result").innerHTML="<li class='fa fa-circle-o'>Correct</li>";
+    results_hash[qword[index]] = true;
   }else{
       document.getElementById("result").innerHTML="<li class='fa fa-circle-o'>Correct</li>";
+      results_hash[qword[index]] = false;
   }
 }, false);

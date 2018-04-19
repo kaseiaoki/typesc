@@ -19,7 +19,7 @@ enum hx{
     h2_alt,
 }
 
-const hxs :Array<string>= ["\\．","\\((\\d+)\\)","[①-⑩]+","・+","\\．\\d*ー"];
+const hxs :Array<string>= ["\\．","\\((\\d+)\\)","[①-⑩]+","^・","\\．\\d*ー"];
 class EventName {
     static LOAD:string = "load";
     static CLICK:string = "click";
@@ -49,12 +49,20 @@ const add_tags = (splited :Array<string>)=>{
 }
 
 const bar_case_find = (text: string) =>{
+  let bar = ['-','ー'];
   let count : number = 0;
-  let result_index =text.indexOf('ー');
-  while (result_index !== -1) {
-    count++;
-    result_index = text.indexOf('ー', result_index + 1);
-  }
+  bar.forEach(bar =>{
+    let result_index =text.indexOf(bar);
+    while (result_index !== -1) {
+      count++;
+      result_index = text.indexOf(bar, result_index + 1);
+    }
+  })
+  // let result_index =text.indexOf('ー');
+  // while (result_index !== -1) {
+  //   count++;
+  //   result_index = text.indexOf('ー', result_index + 1);
+  // }
   if(count!==null&&count!==-1){
     switch(count) {
       case 0: text="<h2>"+text+"</h2>" ; return text;
